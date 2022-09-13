@@ -6,5 +6,5 @@ variable "ec2-type" {
 variable "key-pair" {
   description = "keypair"
   type = string
-  key_name= "zwaw"
+  default= "zwaw"
 }
