@@ -3,8 +3,13 @@ variable "ec2-type" {
   type=string
   default = "t2.micro"
 }
-variable "key-pair" {
-  description = "keypair"
-  type = string
-  default= "zwaw"
+#variable "key-pair" {
+#  description = "keypair"
+#  type = string
+#  default= "zwaw"
+#}
+
+variable key_name {
+  default = "zwaw"
+  type    = string
 }
