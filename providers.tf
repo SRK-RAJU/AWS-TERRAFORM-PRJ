@@ -9,9 +9,9 @@ terraform {
 }
 terraform {
     backend "s3" {
-      bucket = "terra-sree"
+      bucket = "terra-sree1"
       key    = "raju/terraform.tfstate"
-      region = "us-west-2"
+      region = "us-east-1"
     }
   }
 
