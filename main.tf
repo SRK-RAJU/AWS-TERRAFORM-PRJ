@@ -14,7 +14,7 @@ resource "aws_instance" "app_server-pub-1" {
   ami           = "ami-05fa00d4c63e32376"
   instance_type = var.ec2-type
   key_name = var.key-pair
-  security_groups = [ aws_security_group.allow-sg.id ]
+  security_groups = [ aws_security_group.allow-sg-pub.id ]
   subnet_id = aws_subnet.public-sub-1.id
   associate_public_ip_address = true
   user_data = "user.tpl"
@@ -33,7 +33,7 @@ resource "aws_instance" "app_server-pub-2" {
   ami           = "ami-05fa00d4c63e32376"
   instance_type = var.ec2-type
   key_name = var.key-pair
-  security_groups = [ aws_security_group.allow-sg.id ]
+  security_groups = [ aws_security_group.allow-sg-pub.id ]
   subnet_id = aws_subnet.public-sub-2.id
   associate_public_ip_address = true
   user_data = "user.tpl"
@@ -52,7 +52,7 @@ resource "aws_instance" "app_server-pvt" {
   ami           = "ami-05fa00d4c63e32376"
   instance_type = var.ec2-type
   key_name = var.key-pair
-  security_groups = [ aws_security_group.allow-sg.id ]
+  security_groups = [ aws_security_group.allow-sg-pvt.id ]
   subnet_id = aws_subnet.private-sub-1.id
   associate_public_ip_address = true
   user_data = "user.tpl"
@@ -205,26 +205,4 @@ resource "aws_route_table_association" "sub-pvt" {
   route_table_id = aws_route_table.my-pvt-rt.id
 }
 
-resource "aws_security_group" "allow-sg" {
-  name        = "allow-sg"
-  description = "Allow SSH inbound connections"
-  vpc_id = aws_vpc.my_vpc.id
 
-  ingress {
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "All traffic"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "allow_sg"
-  }
-}
