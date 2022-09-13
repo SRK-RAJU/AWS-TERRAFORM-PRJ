@@ -63,6 +63,14 @@ resource "aws_internet_gateway" "my_vpc_igw" {
     })
 }
 
+resource "aws_internet_gateway_attachment" "example" {
+  internet_gateway_id = aws_internet_gateway.my_vpc_igw.id
+  vpc_id              = aws_vpc.my_vpc.id
+}
+
+resource "aws_vpc" "example" {
+  cidr_block =["172.0.0.0/26"]
+}
 resource "aws_internet_gateway_attachment" "igw-attach" {
   internet_gateway_id=aws_internet_gateway.my_vpc_igw.id
   vpc_id=aws_vpc.my_vpc.id
