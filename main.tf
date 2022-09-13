@@ -75,114 +75,15 @@ resource "aws_vpc" "my_vpc" {
     Name = "my-vpc"
   }
 }
-
-#Creating Public subnet
-
-resource "aws_subnet" "public-sub-1" {
-  vpc_id     = aws_vpc.my_vpc.id
-  cidr_block = "172.31.0.0/28"
-  availability_zone = "us-east-1a"
-  enable_resource_name_dns_a_record_on_launch="true"
-  map_public_ip_on_launch = "true"
-  tags = merge(
-    local.tags,
-    {
-      Name = "my_vpc-pub-sub-1"
-    })
-}
-resource "aws_subnet" "public-sub-2" {
-  vpc_id     = aws_vpc.my_vpc.id
-  cidr_block = "172.31.0.16/28"
-  availability_zone = "us-east-1a"
-  enable_resource_name_dns_a_record_on_launch="true"
-  map_public_ip_on_launch = "true"
-  tags = merge(
-    local.tags,
-    {
-      Name = "my_vpc-pvt-sub-2"
-    })
-}
-
-#creating private subnet
-
-resource "aws_subnet" "private-sub-1" {
-  vpc_id     = aws_vpc.my_vpc.id
-  cidr_block = "172.31.0.32/28"
-  availability_zone = "us-east-1b"
-  enable_resource_name_dns_a_record_on_launch="true"
-  tags = merge(
-    local.tags,
-    {
-      Name = "my_vpc-pvt-sub-1"
-    })
-}
-resource "aws_subnet" "private-sub-2" {
-  vpc_id     = aws_vpc.my_vpc.id
-  cidr_block = "172.31.0.48/28"
-  availability_zone = "us-east-1b"
-  enable_resource_name_dns_a_record_on_launch="true"
-  tags = merge(
-    local.tags,
-    {
-      Name = "my_vpc-pvt-sub-2"
-    })
-}
-#creating route tables
-
-resource "aws_route_table" "my-pub-rt" {
-  vpc_id = aws_vpc.my_vpc.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.my_vpc_igw.id
-  }
-
-  tags = merge(
-    local.tags,
-    {
-      Name = "pub-rt"
-    })
-}
 #creating elastic ip
 resource "aws_eip" "nat-eip" {
   vpc=true
 }
 
-resource "aws_internet_gateway" "my_vpc_igw" {
-  vpc_id = aws_vpc.my_vpc.id
-
-  tags = merge(
-    local.tags,{
-      Name = "my-vpc-igw"
-    })
-}
-
-resource "aws_internet_gateway_attachment" "igw-attach" {
-  internet_gateway_id=aws_internet_gateway.my_vpc_igw.id
-  vpc_id=aws_vpc.my_vpc.id
-}
-resource "aws_nat_gateway" "dev-nat" {
-  allocation_id = aws_eip.nat-eip.id
-  subnet_id = aws_subnet.public-sub-1.id
-  tags={
-    Name="Nat Gateway"
-  }
-  depends_on = [aws_internet_gateway.my_vpc_igw]
-}
 
 
-resource "aws_route_table" "my-pvt-rt" {
-  vpc_id =aws_vpc.my_vpc.id
-  route {
-    cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.dev-nat.id
-  }
-  tags =merge(merge
-    local.tags,
-    {
-      Name="pvt-RT"
-    })
-}
+
+
 #resource "aws_route_table" "my-pub-rt" {
 #  vpc_id =aws_vpc.my_vpc.id
 #  route {
@@ -195,14 +96,4 @@ resource "aws_route_table" "my-pvt-rt" {
 #      Name="pub-RT"
 #    })
 #}
-
-resource "aws_route_table_association" "sub-pub" {
-  subnet_id = [aws_subnet.public-sub-1.id,aws_subnet.public-sub-2.id]
-  route_table_id = aws_route_table.my-pub-rt.id
-}
-resource "aws_route_table_association" "sub-pvt" {
-  subnet_id =[ aws_subnet.private-sub-1.id,aws_subnet.private-sub-2.id]
-  route_table_id = aws_route_table.my-pvt-rt.id
-}
-
 
