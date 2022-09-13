@@ -10,12 +10,12 @@
 #  public_subnet = module.network.public-sub-1
 #}
 
-resource "aws_instance" "app_server-pub-1" {
+resource "aws_instance" "app_server-pub" {
   ami           = "ami-05fa00d4c63e32376"
   instance_type = var.ec2-type
   key_name = var.key-pair
   security_groups = [ aws_security_group.allow-sg-pub.id ]
-  subnet_id = aws_subnet.public-sub-1.id
+  subnet_id = aws_subnet.public-sub.id
   associate_public_ip_address = true
   user_data = "user.tpl"
   #  count = 2
@@ -24,36 +24,36 @@ resource "aws_instance" "app_server-pub-1" {
     local.tags,
     {
       #    Name = "pub-ec2-${count.index}"
-      Name="pub-ec2-1"
+      Name="pub-ec2"
       name= "devops-raju"
     })
 }
 
-resource "aws_instance" "app_server-pub-2" {
-  ami           = "ami-05fa00d4c63e32376"
-  instance_type = var.ec2-type
-  key_name = var.key-pair
-  security_groups = [ aws_security_group.allow-sg-pub.id ]
-  subnet_id = aws_subnet.public-sub-2.id
-  associate_public_ip_address = true
-  user_data = "user.tpl"
-  #  count = 2
-
-  tags = merge(
-    local.tags,
-    {
-      #    Name = "pub-ec2-${count.index}"
-      Name="pub-ec2-2"
-      name= "devops-raju"
-    })
-}
+#resource "aws_instance" "app_server-pub-2" {
+#  ami           = "ami-05fa00d4c63e32376"
+#  instance_type = var.ec2-type
+#  key_name = var.key-pair
+#  security_groups = [ aws_security_group.allow-sg-pub.id ]
+#  subnet_id = aws_subnet.public-sub.id
+#  associate_public_ip_address = true
+#  user_data = "user.tpl"
+#  #  count = 2
+#
+#  tags = merge(
+#    local.tags,
+#    {
+#      #    Name = "pub-ec2-${count.index}"
+#      Name="pub-ec2-2"
+#      name= "devops-raju"
+#    })
+#}
 
 resource "aws_instance" "app_server-pvt" {
   ami           = "ami-05fa00d4c63e32376"
   instance_type = var.ec2-type
   key_name = var.key-pair
   security_groups = [ aws_security_group.allow-sg-pvt.id ]
-  subnet_id = aws_subnet.private-sub-1.id
+  subnet_id = aws_subnet.private-sub.id
   associate_public_ip_address = true
   user_data = "user.tpl"
   #  count = 2
@@ -115,7 +115,7 @@ Name = "alb-sg"
 resource "aws_alb" "alb" {
   name            = "terraform-alb"
   security_groups = [aws_security_group.alb.id]
-  subnets         = [aws_subnet.private-sub-1.*.id]
+  subnets         = [aws_subnet.private-sub.*.id]
   tags = {
     Name = "terraform-alb"
   }
