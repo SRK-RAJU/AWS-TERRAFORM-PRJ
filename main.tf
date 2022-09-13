@@ -17,12 +17,12 @@ resource "tls_private_key" "key" {
   rsa_bits  = 4096
 }
 resource "local_file" "private_key" {
-  filename          = "TEST.pem"
+  filename          = "zwaw.pem"
   sensitive_content = tls_private_key.key.private_key_pem
   file_permission   = "0400"
 }
 resource "aws_key_pair" "key_pair" {
-  key_name   = "TEST"
+  key_name   = "zwaw"
   public_key = tls_private_key.key.public_key_openssh
 }
 #Create a new EC2 launch configuration
