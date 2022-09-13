@@ -107,7 +107,7 @@ protocol    = "-1"
 cidr_blocks = ["0.0.0.0/0"]
 }
 
-tags {
+tags = {
 Name = "alb-sg"
 }
 }
@@ -116,7 +116,7 @@ resource "aws_alb" "alb" {
   name            = "terraform-alb"
   security_groups = [aws_security_group.alb.id]
   subnets         = [aws_subnet.private-sub-1.*.id]
-  tags {
+  tags = {
     Name = "terraform-alb"
   }
 }
