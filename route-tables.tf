@@ -4,7 +4,7 @@ resource "aws_route_table" "my-pvt-rt" {
     cidr_block = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.dev-nat.id
   }
-  tags =merge(merge
+  tags =merge(
     local.tags,
     {
       Name="pvt-RT"
