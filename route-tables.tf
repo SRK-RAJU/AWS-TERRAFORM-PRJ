@@ -12,11 +12,11 @@ resource "aws_route_table" "my-pvt-rt" {
 }
 
 resource "aws_route_table_association" "sub-pub" {
-  subnet_id =[aws_subnet.public-sub-1.id,aws_subnet.public-sub-2.id]
+  subnet_id =["aws_subnet.public-sub-1.id,aws_subnet.public-sub-2.id"]
   route_table_id = aws_route_table.my-pub-rt.id
 }
 resource "aws_route_table_association" "sub-pvt" {
-  subnet_id =[aws_subnet.private-sub-1.id,aws_subnet.private-sub-2.id]
+  subnet_id =["aws_subnet.private-sub-1.id,aws_subnet.private-sub-2.id"]
   route_table_id = aws_route_table.my-pvt-rt.id
 }
 resource "aws_route_table" "my-pub-rt" {
