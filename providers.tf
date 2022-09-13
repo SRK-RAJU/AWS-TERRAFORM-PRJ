@@ -7,6 +7,14 @@ terraform {
   }
   required_version = ">= 0.14.9"
 }
+terraform {
+    backend "s3" {
+      bucket = "terra-sree"
+      key    = "raju/terraform.tfstate"
+      region = "us-east-1"
+    }
+  }
+
 provider "aws"{
   profile = "default" # aws credential in $HOME/.aws/credentials
   region  = "us-east-1"
