@@ -286,7 +286,7 @@ resource "aws_lb" "nlb" {
   name               = "nlb-lb-tf"
   internal           = false
   load_balancer_type = "network"
-  subnets            = [for subnet in aws_subnet.public-sub : subnet.id]
+  subnets            = [aws_subnet.private-sub.id]
 
   enable_deletion_protection = true
 
