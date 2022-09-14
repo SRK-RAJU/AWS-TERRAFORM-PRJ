@@ -182,8 +182,10 @@ resource "aws_instance" "app_server-pvt" {
 }
 
 resource "aws_launch_configuration" "launch_config" {
-  name_prefix                 = "terraform-example-web-instance"
-  image_id                    = "${lookup(var.amis, var.region)}"
+  name_prefix                 = "tf-auto-scale-instance"
+
+  image_id = "ami-05fa00d4c63e32376"
+#  image_id                    = "${lookup(var.amis, var.region)}"
 #  image_id                    = ["${ lookup(var.amis, var.region)}"]
 #  image_id = "ami-05fa00d4c63e32376"
   instance_type               = var.instance_type
@@ -216,7 +218,7 @@ resource "aws_autoscaling_group" "autoscaling_group" {
 
   tag {
     key                 = "Name"
-    value               = "terraform-example-autoscaling-group"
+    value               = "terraform-autoscaling-group"
     propagate_at_launch = true
   }
 }
@@ -240,7 +242,7 @@ resource "aws_eip" "nat-eip" {
 }
 
 resource "aws_security_group" "alb" {
-  name        = "terraform_alb_security_group"
+  name        = "tf_alb_sg"
   description = "Terraform load balancer security group"
   vpc_id      = aws_vpc.my_vpc.id
 
@@ -299,7 +301,7 @@ resource "aws_lb" "nlb" {
 }
 #### aws alb target group
 resource "aws_alb_target_group" "group" {
-  name     = "terraform-target-alb-target"
+  name     = "tf-alb-target"
   port     = 80
   protocol = "HTTP"
   vpc_id   = "${aws_vpc.my_vpc.id}"
