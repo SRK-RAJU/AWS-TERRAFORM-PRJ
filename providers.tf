@@ -28,6 +28,6 @@ terraform {
 provider "aws" {
 #  profile = "default" # aws credential in $HOME/.aws/credentials
   region  = "us-east-1"
-  access_key = "xxxxxxxxx"
-  secret_key = "xxxxxxx"
+#  access_key = "xxxxxxxxx"
+#  secret_key = "xxxxxxx"
 }
