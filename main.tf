@@ -286,9 +286,11 @@ resource "aws_lb" "nlb" {
   name               = "nlb-lb-tf"
   internal           = false
   load_balancer_type = "network"
-  subnets            = [aws_subnet.private-sub.id]
+  security_groups = [aws_security_group.allow-sg-pvt.id]
+  subnets            = [aws_subnet.public-sub.id,aws_subnet.private-sub.id]
 
-  enable_deletion_protection = true
+  enable_deletion_protection = false
+
 
   tags = {
     Name="NLB-terraform"
