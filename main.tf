@@ -183,7 +183,8 @@ resource "aws_instance" "app_server-pvt" {
 
 resource "aws_launch_configuration" "launch_config" {
   name_prefix                 = "terraform-example-web-instance"
-  image_id                    =["${ lookup(var.amis, var.region)}"]
+  image_id                    = "${lookup(var.amis, var.region)}"
+#  image_id                    = ["${ lookup(var.amis, var.region)}"]
 #  image_id = "ami-05fa00d4c63e32376"
   instance_type               = var.instance_type
 #   instance_type = "t2.micro"
