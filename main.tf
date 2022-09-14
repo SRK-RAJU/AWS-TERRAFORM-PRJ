@@ -130,7 +130,7 @@ resource "aws_instance" "app_server-pub" {
   key_name = var.generated_key_name
   security_groups = [ aws_security_group.allow-sg-pub.id ]
   subnet_id = aws_subnet.public-sub.id
-  associate_public_ip_address = true
+#  associate_public_ip_address = true
   user_data = "user.tpl"
   #  count = 2
 
@@ -168,7 +168,7 @@ resource "aws_instance" "app_server-pvt" {
   key_name = var.generated_key_name
   security_groups = [ aws_security_group.allow-sg-pvt.id ]
   subnet_id = aws_subnet.private-sub.id
-  associate_public_ip_address = true
+#  associate_public_ip_address = true
   user_data = "user.tpl"
   #  count = 2
 
