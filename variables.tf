@@ -21,7 +21,7 @@ variable "generated_key_name" {
 }
 
 variable "amis" {
-  type = "map"
+  type = map(string)
 }
 variable "instance_type" {}
 variable "autoscaling_group_min_size" {}
