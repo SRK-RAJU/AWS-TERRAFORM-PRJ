@@ -237,6 +237,22 @@ resource "aws_alb" "alb" {
 
 
 
+resource "aws_lb" "nlb" {
+  name               = "nlb-lb-tf"
+  internal           = false
+  load_balancer_type = "network"
+  subnets            = [for subnet in aws_subnet.public-sub : subnet.id]
+
+  enable_deletion_protection = true
+
+  tags = {
+    Name="NLB-terraform"
+    Environment = "production"
+  }
+}
+
+
+
 
 #resource "aws_route_table" "my-pub-rt" {
 #  vpc_id =aws_vpc.my_vpc.id
