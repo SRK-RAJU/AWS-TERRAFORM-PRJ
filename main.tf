@@ -181,6 +181,50 @@ resource "aws_instance" "app_server-pvt" {
     })
 }
 
+resource "aws_launch_configuration" "launch_config" {
+  name_prefix                 = "terraform-example-web-instance"
+  image_id                    =["${ lookup(var.amis, var.region)}"]
+#  image_id = "ami-05fa00d4c63e32376"
+  instance_type               = var.instance_type
+#   instance_type = "t2.micro"
+#  key_name                    = "${aws_key_pair.deployer.id}"
+  key_name = var.generated_key_name
+  security_groups             = [aws_security_group.default.id]
+
+  associate_public_ip_address = true
+     user_data = <<-EOF
+              #!/bin/bash
+              yum -y install httpd
+              echo "Hello, from Terraform" > /var/www/html/index.html
+              service httpd start
+              chkconfig httpd on
+              EOF
+
+
+lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_autoscaling_group" "autoscaling_group" {
+  launch_configuration = aws_launch_configuration.launch_config.id
+  min_size             = var.autoscaling_group_min_size
+  max_size             = var.autoscaling_group_max_size
+  target_group_arns    = [aws_alb_target_group.group.arn]
+  vpc_zone_identifier  = [aws_subnet.public-sub.id,aws_subnet.private-sub.id]
+
+  tag {
+    key                 = "Name"
+    value               = "terraform-example-autoscaling-group"
+    propagate_at_launch = true
+  }
+}
+
+
+
+
+
+
 resource "aws_vpc" "my_vpc" {
   cidr_block = "172.31.0.0/26"
   instance_tenancy = "default"
@@ -250,7 +294,45 @@ resource "aws_lb" "nlb" {
     Environment = "production"
   }
 }
+#### aws alb target group
+resource "aws_alb_target_group" "group" {
+  name     = "terraform-target-alb-target"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = "${aws_vpc.my_vpc.id}"
+  stickiness {
+    type = "lb_cookie"
+  }
+  # Alter the destination of the health check to be the login page.
+  health_check {
+    path = "/login"
+    port = 80
+  }
+}
+### alb target group http listener
+resource "aws_alb_listener" "listener_http" {
+  load_balancer_arn = "${aws_alb.alb.arn}"
+  port              = "80"
+  protocol          = "HTTP"
 
+  default_action {
+    target_group_arn = "${aws_alb_target_group.group.arn}"
+    type             = "forward"
+  }
+}
+
+## alb target group https listener
+resource "aws_alb_listener" "listener_https" {
+  load_balancer_arn = "${aws_alb.alb.arn}"
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+#  certificate_arn   = "${var.certificate_arn}"
+  default_action {
+    target_group_arn = "${aws_alb_target_group.group.arn}"
+    type             = "forward"
+  }
+}
 
 
 
@@ -266,4 +348,28 @@ resource "aws_lb" "nlb" {
 #      Name="pub-RT"
 #    })
 #}
+############ route53 record
+
+#resource "aws_route53_record" "terraform" {
+#  zone_id = "${data.aws_route53_zone.zone.zone_id}"
+#  name    = "terraform.${var.route53_hosted_zone_name}"
+#  type    = "A"
+#  alias {
+#    name                   = "${aws_alb.alb.dns_name}"
+#    zone_id                = "${aws_alb.alb.zone_id}"
+#    evaluate_target_health = true
+#  }
+#}
+#
+#
+#data "aws_route53_zone" "zone" {
+#  name = "${var.route53_hosted_zone_name}"
+#}
+#
+#variable "route53_hosted_zone_name" {}
+#variable "allowed_cidr_blocks" {
+#  type = "list"
+#}
+
+
 

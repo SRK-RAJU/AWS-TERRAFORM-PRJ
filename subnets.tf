@@ -82,3 +82,6 @@ resource "aws_nat_gateway" "dev-nat" {
 }
 
 
+
+
+
