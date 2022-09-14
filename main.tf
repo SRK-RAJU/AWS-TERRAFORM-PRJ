@@ -229,7 +229,7 @@ Name = "alb-sg"
 resource "aws_alb" "alb" {
   name            = "terraform-alb"
   security_groups = [aws_security_group.alb.id]
-  subnets         = [aws_subnet.private-sub.id]
+  subnets         = [aws_subnet.public-sub.id,aws_subnet.private-sub.id]
   tags = {
     Name = "terraform-alb"
   }
