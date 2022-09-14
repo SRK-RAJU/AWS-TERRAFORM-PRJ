@@ -50,94 +50,20 @@ resource "aws_key_pair" "generated_key" {
 #  public_key = tls_private_key.key.public_key_openssh
 #}
 #Create a new EC2 launch configuration
-resource "aws_instance" "ec2_public" {
-  ami                    = "ami-05fa00d4c63e32376"
-  instance_type               = var.ec2-type
-  key_name                    = "${var.key_name}"
-  security_groups = [ aws_security_group.allow-sg-pub.id ]
-#  security_groups             = ["${aws_security_group.ssh-security-group.id}"]
-#  subnet_id                   = "${aws_subnet.public-subnet-1.id}"
-  subnet_id = aws_subnet.public-sub.id
-  associate_public_ip_address = true
-  #user_data                   = "${data.template_file.provision.rendered}"
-  #iam_instance_profile = "${aws_iam_instance_profile.some_profile.id}"
-  lifecycle {
-    create_before_destroy = true
-  }
-  tags = merge(
-    local.tags,
-    {
-      #    Name = "pub-ec2-${count.index}"
-      Name="pub-ec2"
-      name= "devops-raju"
-    })
-#  tags = {
-#    "Name" = "EC2-PUBLIC"
-#  }
-  # Copies the ssh key file to home dir
-  # Copies the ssh key file to home dir
-  provisioner "file" {
-    source      = "./${var.key_name}.pem"
-    destination = "/home/ec2-user/${var.key_name}.pem"
-    connection {
-      type        = "ssh"
-      user        = "ec2-user"
-      private_key = file("${var.key_name}.pem")
-      host        = self.public_ip
-    }
-  }
-  //chmod key 400 on EC2 instance
-  provisioner "remote-exec" {
-    inline = ["chmod 400 ~/${var.key_name}.pem"]
-    connection {
-      type        = "ssh"
-      user        = "ec2-user"
-      private_key = file("${var.key_name}.pem")
-      host        = self.public_ip
-    }
-  }
-}
-#Create a new EC2 launch configuration
-resource "aws_instance" "ec2_private" {
-  #name_prefix                 = "terraform-example-web-instance"
-  ami                    = "ami-05fa00d4c63e32376"
-#  instance_type               = "${var.instance_type}"
-  instance_type = var.ec2-type
-  key_name                    = "${var.key_name}"
-  security_groups = [ aws_security_group.allow-sg-pvt.id ]
-#  security_groups             = ["${aws_security_group.webserver-security-group.id}"]
-  subnet_id = aws_subnet.private-sub.id
-#  subnet_id                   = "${aws_subnet.private-subnet-1.id}"
-  associate_public_ip_address = false
-  #user_data                   = "${data.template_file.provision.rendered}"
-  #iam_instance_profile = "${aws_iam_instance_profile.some_profile.id}"
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  tags = merge(
-        local.tags,
-        {
-          #      Name = "pvt-ec2-${count.index}"
-          Name="pvt-ec2"
-          name= "devops-raju"
-        })
-#  tags = {
-#    "Name" = "EC2-Private"
-#  }
-}
-
-
-#resource "aws_instance" "app_server-pub" {
-#  ami           = "ami-05fa00d4c63e32376"
-#  instance_type = var.ec2-type
-#  key_name = var.key-pair
+#resource "aws_instance" "ec2_public" {
+#  ami                    = "ami-05fa00d4c63e32376"
+#  instance_type               = var.ec2-type
+#  key_name                    = "${var.key_name}"
 #  security_groups = [ aws_security_group.allow-sg-pub.id ]
+##  security_groups             = ["${aws_security_group.ssh-security-group.id}"]
+##  subnet_id                   = "${aws_subnet.public-subnet-1.id}"
 #  subnet_id = aws_subnet.public-sub.id
 #  associate_public_ip_address = true
-#  user_data = "user.tpl"
-#  #  count = 2
-#
+#  #user_data                   = "${data.template_file.provision.rendered}"
+#  #iam_instance_profile = "${aws_iam_instance_profile.some_profile.id}"
+#  lifecycle {
+#    create_before_destroy = true
+#  }
 #  tags = merge(
 #    local.tags,
 #    {
@@ -145,7 +71,81 @@ resource "aws_instance" "ec2_private" {
 #      Name="pub-ec2"
 #      name= "devops-raju"
 #    })
+##  tags = {
+##    "Name" = "EC2-PUBLIC"
+##  }
+#  # Copies the ssh key file to home dir
+#  # Copies the ssh key file to home dir
+#  provisioner "file" {
+#    source      = "./${var.key_name}.pem"
+#    destination = "/home/ec2-user/${var.key_name}.pem"
+#    connection {
+#      type        = "ssh"
+#      user        = "ec2-user"
+#      private_key = file("${var.key_name}.pem")
+#      host        = self.public_ip
+#    }
+#  }
+#  //chmod key 400 on EC2 instance
+#  provisioner "remote-exec" {
+#    inline = ["chmod 400 ~/${var.key_name}.pem"]
+#    connection {
+#      type        = "ssh"
+#      user        = "ec2-user"
+#      private_key = file("${var.key_name}.pem")
+#      host        = self.public_ip
+#    }
+#  }
 #}
+##Create a new EC2 launch configuration
+#resource "aws_instance" "ec2_private" {
+#  #name_prefix                 = "terraform-example-web-instance"
+#  ami                    = "ami-05fa00d4c63e32376"
+##  instance_type               = "${var.instance_type}"
+#  instance_type = var.ec2-type
+#  key_name                    = "${var.key_name}"
+#  security_groups = [ aws_security_group.allow-sg-pvt.id ]
+##  security_groups             = ["${aws_security_group.webserver-security-group.id}"]
+#  subnet_id = aws_subnet.private-sub.id
+##  subnet_id                   = "${aws_subnet.private-subnet-1.id}"
+#  associate_public_ip_address = false
+#  #user_data                   = "${data.template_file.provision.rendered}"
+#  #iam_instance_profile = "${aws_iam_instance_profile.some_profile.id}"
+#  lifecycle {
+#    create_before_destroy = true
+#  }
+#
+#  tags = merge(
+#        local.tags,
+#        {
+#          #      Name = "pvt-ec2-${count.index}"
+#          Name="pvt-ec2"
+#          name= "devops-raju"
+#        })
+##  tags = {
+##    "Name" = "EC2-Private"
+##  }
+#}
+
+
+resource "aws_instance" "app_server-pub" {
+  ami           = "ami-05fa00d4c63e32376"
+  instance_type = var.ec2-type
+  key_name = var.generated_key_name
+  security_groups = [ aws_security_group.allow-sg-pub.id ]
+  subnet_id = aws_subnet.public-sub.id
+  associate_public_ip_address = true
+  user_data = "user.tpl"
+  #  count = 2
+
+  tags = merge(
+    local.tags,
+    {
+      #    Name = "pub-ec2-${count.index}"
+      Name="pub-ec2"
+      name= "devops-raju"
+    })
+}
 
 #resource "aws_instance" "app_server-pub-2" {
 #  ami           = "ami-05fa00d4c63e32376"
@@ -166,24 +166,24 @@ resource "aws_instance" "ec2_private" {
 #    })
 #}
 
-#resource "aws_instance" "app_server-pvt" {
-#  ami           = "ami-05fa00d4c63e32376"
-#  instance_type = var.ec2-type
-#  key_name = var.key-pair
-#  security_groups = [ aws_security_group.allow-sg-pvt.id ]
-#  subnet_id = aws_subnet.private-sub.id
-#  associate_public_ip_address = true
-#  user_data = "user.tpl"
-#  #  count = 2
-#
-#  tags = merge(
-#    local.tags,
-#    {
-#      #      Name = "pvt-ec2-${count.index}"
-#      Name="pvt-ec2"
-#      name= "devops-raju"
-#    })
-#}
+resource "aws_instance" "app_server-pvt" {
+  ami           = "ami-05fa00d4c63e32376"
+  instance_type = var.ec2-type
+  key_name = var.generated_key_name
+  security_groups = [ aws_security_group.allow-sg-pvt.id ]
+  subnet_id = aws_subnet.private-sub.id
+  associate_public_ip_address = true
+  user_data = "user.tpl"
+  #  count = 2
+
+  tags = merge(
+    local.tags,
+    {
+      #      Name = "pvt-ec2-${count.index}"
+      Name="pvt-ec2"
+      name= "devops-raju"
+    })
+}
 
 resource "aws_vpc" "my_vpc" {
   cidr_block = "172.31.0.0/26"
