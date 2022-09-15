@@ -196,14 +196,35 @@ resource "aws_launch_configuration" "launch_config" {
   security_groups             = [aws_security_group.default.id]
 
   associate_public_ip_address = true
-     user_data = <<-EOF
-              #!/bin/bash
-              yum -y install httpd
-              echo "Hello, from Terraform" > /var/www/html/index.html
-              service httpd start
-              chkconfig httpd on
-              EOF
+#     user_data = <<-EOF
+#              #!/bin/bash
+#              yum -y install httpd
+#              echo "Hello, from Terraform" > /var/www/html/index.html
+#              service httpd start
+#              chkconfig httpd on
+#              EOF
 
+       user_data = <<-EOF
+                #!/bin/bash
+                sudo apt-get update
+sudo apt-get install -y apache2
+sudo systemctl start apache2
+sudo systemctl enable apache2
+echo "<h1>Deployed via Terraform</h1>" sudo tee /var/www/html/index.html
+
+#                echo "Hello, from Terraform" > /var/www/html/index.html
+#                service httpd start
+#                chkconfig httpd on
+                EOF
+# user_data = << EOF
+#            #! /bin/bash
+#sudo apt-get update
+#sudo apt-get install -y apache2
+#sudo systemctl start apache2
+#sudo systemctl enable apache2
+#echo "<h1>Deployed via Terraform</h1>"
+#sudo tee /var/www/html/index.html
+#EOF
 
 lifecycle {
     create_before_destroy = true
