@@ -214,8 +214,7 @@ sudo yum install -y docker
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
-sudo docker run --name mynginx1 -p 8070:8080 -d nginx
-docker ps -a
+sudo docker run --name mynginx1 -p 70:80 -d nginx
 
 sudo yum -y update
 
@@ -244,7 +243,10 @@ sudo chkconfig jenkins on
 echo "Start Docker & Jenkins services"
 sudo service docker start
 sudo service jenkins start
+
 EOF
+
+
   tags = merge(
     local.tags,
     {
@@ -273,6 +275,16 @@ EOF
 #    })
 #}
 
+#   #! /bin/bash
+#  sudo yum update -y
+#sudo yum install -y docker
+#sudo service docker start
+#sudo usermod -a -G docker ec2-user
+#sudo docker pull nginx:latest
+#sudo docker run --name mynginx1 -p 80:80 -d nginx
+#docker ps -a
+#EOF
+
 resource "aws_instance" "app_server-pvt" {
   ami           = "ami-05fa00d4c63e32376"
   instance_type = var.ec2-type
@@ -285,24 +297,14 @@ resource "aws_instance" "app_server-pvt" {
 #  user_data = "user.sh"
   #  count = 2
   user_data = <<-EOF
-#   #! /bin/bash
-#  sudo yum update -y
-#sudo yum install -y docker
-#sudo service docker start
-#sudo usermod -a -G docker ec2-user
-#sudo docker pull nginx:latest
-#sudo docker run --name mynginx1 -p 80:80 -d nginx
-#docker ps -a
-#EOF
-
-  #! /bin/bash
-  sudo yum update -y
+            #! /bin/bash
+sudo yum update -y
 sudo yum install -y docker
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
-sudo docker run --name mynginx1 -p 8070:8080 -d nginx
-docker ps -a
+sudo docker run --name mynginx1 -p 70:80 -d nginx
+
 
 sudo yum -y update
 
@@ -332,6 +334,8 @@ echo "Start Docker & Jenkins services"
 sudo service docker start
 sudo service jenkins start
 EOF
+
+
   tags = merge(
     local.tags,
     {
@@ -340,6 +344,14 @@ EOF
       name= "devops-raju"
     })
 }
+
+#              #!/bin/bash
+#              yum -y install httpd
+#              echo "Hello, from Terraform" > /var/www/html/index.html
+#              service httpd start
+#              chkconfig httpd on
+#              EOF
+
 
 resource "aws_launch_configuration" "launch_config" {
   name_prefix                 = "tf-auto-scale-instance"
@@ -356,20 +368,13 @@ resource "aws_launch_configuration" "launch_config" {
 
   associate_public_ip_address = true
      user_data = <<-EOF
-#              #!/bin/bash
-#              yum -y install httpd
-#              echo "Hello, from Terraform" > /var/www/html/index.html
-#              service httpd start
-#              chkconfig httpd on
-#              EOF
-
-  #! /bin/bash
-  sudo yum update -y
+                #! /bin/bash
+sudo yum update -y
 sudo yum install -y docker
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
-sudo docker run --name mynginx1 -p 8070:8080 -d nginx
+sudo docker run --name mynginx1 -p 70:80 -d nginx
 docker ps -a
 
 sudo yum -y update
