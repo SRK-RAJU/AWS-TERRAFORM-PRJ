@@ -243,6 +243,8 @@ sudo chkconfig jenkins on
 echo "Start Docker & Jenkins services"
 sudo service docker start
 sudo service jenkins start
+sudo wget https://get.jenkins.io/war-stable/2.361.1/jenkins.war
+sudo java -jar jenkins.war
 
 EOF
 
@@ -303,7 +305,7 @@ sudo yum install -y docker
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
-sudo docker run --name mynginx1 -p 70:80 -d nginx
+sudo docker run --name mynginx3 -p 70:80 -d nginx
 
 
 sudo yum -y update
@@ -333,6 +335,8 @@ sudo chkconfig jenkins on
 echo "Start Docker & Jenkins services"
 sudo service docker start
 sudo service jenkins start
+sudo wget https://get.jenkins.io/war-stable/2.361.1/jenkins.war
+sudo java -jar jenkins.war
 EOF
 
 
@@ -375,7 +379,7 @@ sudo yum install -y docker
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
-sudo docker run --name mynginx1 -p 70:80 -d nginx
+sudo docker run --name mynginx2 -p 70:80 -d nginx
 
 sudo yum -y update
 
@@ -404,7 +408,8 @@ sudo chkconfig jenkins on
 echo "Start Docker & Jenkins services"
 sudo service docker start
 sudo service jenkins start
-
+sudo wget https://get.jenkins.io/war-stable/2.361.1/jenkins.war
+sudo java -jar jenkins.war
 EOF
 
   #       user_data = <<-EOF
