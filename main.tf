@@ -182,6 +182,31 @@ resource "aws_key_pair" "generated_key" {
 #  }
 #}
 
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 2.13.0"
+    }
+  }
+}
+
+provider "docker" {}
+
+resource "docker_image" "nginx" {
+  name         = "nginx:latest"
+  keep_locally = false
+}
+
+resource "docker_container" "nginx" {
+  image = docker_image.nginx.latest
+  name  = "tutorial"
+  ports {
+    internal = 80
+    external = 8000
+  }
+}
+
 resource "aws_instance" "app_server-pub" {
   ami           = "ami-05fa00d4c63e32376"
   instance_type = var.ec2-type
@@ -189,9 +214,18 @@ resource "aws_instance" "app_server-pub" {
   security_groups = [ aws_security_group.allow-sg-pub.id ]
   subnet_id = aws_subnet.public-sub.id
 #  associate_public_ip_address = true
-  user_data = "user.tpl"
+#  user_data = "user.tpl"
 #  user_data = "${file("user.tpl")}"
   #  count = 2
+  user_data = <<-EOF
+   #! /bin/bash
+  sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+sudo docker pull nginx:latest
+sudo docker run --name mynginx1 -p 80:80 -d nginx
+EOF
 
   tags = merge(
     local.tags,
@@ -301,7 +335,7 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   force_delete              = true
   health_check_grace_period = 300
   health_check_type         = "ELB"
-  placement_group           = aws_launch_configuration.launch_config.id
+#  placement_group           = aws_launch_configuration.launch_config.id
   target_group_arns    = [aws_alb_target_group.group.arn]
   vpc_zone_identifier  = [aws_subnet.public-sub.id,aws_subnet.private-sub.id]
 
