@@ -242,7 +242,7 @@ resource "aws_autoscaling_group" "autoscaling_group" {
 
   tag {
     key                 = "Name"
-    value               = "terraform-autoscaling-group"
+    value               = "tf-autoscaling-group"
     propagate_at_launch = true
   }
 }
