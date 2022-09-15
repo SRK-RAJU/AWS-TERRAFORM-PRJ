@@ -210,13 +210,13 @@ resource "aws_instance" "app_server-pub" {
   user_data = <<-EOF
 #! /bin/bash
 sudo yum update -y
+echo "Install Docker engine"
 sudo yum install -y docker
+sudo sudo chkconfig docker on
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
 sudo docker run --name mynginx1 -p 70:80 -d nginx
-
-sudo yum -y update
 
 echo "Install Java JDK 8"
 sudo yum remove -y java
@@ -227,11 +227,6 @@ sudo yum install -y maven
 
 echo "Install git"
 sudo yum install -y git
-
-echo "Install Docker engine"
-sudo yum update -y
-sudo yum install docker -y
-sudo sudo chkconfig docker on
 
 echo "Install Jenkins"
 sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
@@ -299,16 +294,15 @@ resource "aws_instance" "app_server-pvt" {
 #  user_data = "user.sh"
   #  count = 2
   user_data = <<-EOF
-            #! /bin/bash
+#! /bin/bash
 sudo yum update -y
+echo "Install Docker engine"
 sudo yum install -y docker
+sudo sudo chkconfig docker on
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
-sudo docker run --name mynginx3 -p 70:80 -d nginx
-
-
-sudo yum -y update
+sudo docker run --name mynginx1 -p 70:80 -d nginx
 
 echo "Install Java JDK 8"
 sudo yum remove -y java
@@ -319,11 +313,6 @@ sudo yum install -y maven
 
 echo "Install git"
 sudo yum install -y git
-
-echo "Install Docker engine"
-sudo yum update -y
-sudo yum install docker -y
-sudo sudo chkconfig docker on
 
 echo "Install Jenkins"
 sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
@@ -337,7 +326,9 @@ sudo service docker start
 sudo service jenkins start
 sudo wget https://get.jenkins.io/war-stable/2.361.1/jenkins.war
 sudo java -jar jenkins.war
+
 EOF
+
 
 
   tags = merge(
