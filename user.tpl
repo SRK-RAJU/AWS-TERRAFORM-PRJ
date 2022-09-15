@@ -10,9 +10,9 @@ sudo yum install docker
 
 sudo usermod -a -G docker ec2-user
 
-id ec2-user
-
-newgrp docker
+#id ec2-user
+#
+#newgrp docker
 
 
 
