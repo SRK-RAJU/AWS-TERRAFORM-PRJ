@@ -239,6 +239,9 @@ resource "aws_vpc" "my_vpc" {
 #creating elastic ip
 resource "aws_eip" "nat-eip" {
   vpc=true
+  tags = {
+    Name="EIP"
+  }
 }
 
 resource "aws_security_group" "alb" {
