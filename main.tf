@@ -131,7 +131,8 @@ resource "aws_instance" "app_server-pub" {
   security_groups = [ aws_security_group.allow-sg-pub.id ]
   subnet_id = aws_subnet.public-sub.id
 #  associate_public_ip_address = true
-  user_data = "${file("user.tpl")}"
+  user_data = "user.sh"
+#  user_data = "${file("user.tpl")}"
   #  count = 2
 
   tags = merge(
@@ -170,7 +171,8 @@ resource "aws_instance" "app_server-pvt" {
   subnet_id = aws_subnet.private-sub.id
 #  associate_public_ip_address = true
 #  user_data = "user.tpl"
-  user_data = "${file("user.tpl")}"
+#  user_data = "${file("user.tpl")}"
+  user_data = "user.sh"
   #  count = 2
 
   tags = merge(
