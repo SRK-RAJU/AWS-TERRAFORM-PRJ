@@ -210,8 +210,10 @@ resource "aws_launch_configuration" "launch_config" {
 sudo apt-get install -y apache2
 sudo systemctl start apache2
 sudo systemctl enable apache2
+
 echo "<h1>Deployed via Terraform</h1>" sudo tee /var/www/html/index.html
 
+sudo systemctl status apache2
 #                echo "Hello, from Terraform" > /var/www/html/index.html
 #                service httpd start
 #                chkconfig httpd on
