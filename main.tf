@@ -208,8 +208,8 @@ resource "aws_instance" "app_server-pub" {
 #  user_data = "${file("user.tpl")}"
   #  count = 2
   user_data = <<-EOF
-   #! /bin/bash
-  sudo yum update -y
+#! /bin/bash
+sudo yum update -y
 sudo yum install -y docker
 sudo service docker start
 sudo usermod -a -G docker ec2-user
@@ -357,6 +357,7 @@ resource "aws_launch_configuration" "launch_config" {
   name_prefix                 = "tf-auto-scale-instance"
 
   image_id = "ami-05fa00d4c63e32376"
+
 #  image_id                    = "${lookup(var.amis, var.region)}"
 #  image_id                    = ["${ lookup(var.amis, var.region)}"]
 #  image_id = "ami-05fa00d4c63e32376"
@@ -367,15 +368,14 @@ resource "aws_launch_configuration" "launch_config" {
   security_groups             = [aws_security_group.default.id]
 
   associate_public_ip_address = true
-     user_data = <<-EOF
-                #! /bin/bash
+  user_data = <<-EOF
+#! /bin/bash
 sudo yum update -y
 sudo yum install -y docker
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
 sudo docker run --name mynginx1 -p 70:80 -d nginx
-docker ps -a
 
 sudo yum -y update
 
@@ -404,9 +404,10 @@ sudo chkconfig jenkins on
 echo "Start Docker & Jenkins services"
 sudo service docker start
 sudo service jenkins start
+
 EOF
 
-#       user_data = <<-EOF
+  #       user_data = <<-EOF
 #                #!/bin/bash
 #                sudo apt-get update
 #sudo apt-get install -y apache2
