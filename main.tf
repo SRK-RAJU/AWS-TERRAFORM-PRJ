@@ -214,10 +214,37 @@ sudo yum install -y docker
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
-sudo docker run --name mynginx1 -p 80:80 -d nginx
+sudo docker run --name mynginx1 -p 8070:8080 -d nginx
 docker ps -a
-EOF
 
+sudo yum -y update
+
+echo "Install Java JDK 8"
+sudo yum remove -y java
+sudo yum install -y java-1.8.0-openjdk
+
+echo "Install Maven"
+sudo yum install -y maven
+
+echo "Install git"
+sudo yum install -y git
+
+echo "Install Docker engine"
+sudo yum update -y
+sudo yum install docker -y
+sudo sudo chkconfig docker on
+
+echo "Install Jenkins"
+sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+sudo yum install -y jenkins
+sudo usermod -a -G docker jenkins
+sudo chkconfig jenkins on
+
+echo "Start Docker & Jenkins services"
+sudo service docker start
+sudo service jenkins start
+EOF
   tags = merge(
     local.tags,
     {
@@ -258,14 +285,52 @@ resource "aws_instance" "app_server-pvt" {
 #  user_data = "user.sh"
   #  count = 2
   user_data = <<-EOF
-   #! /bin/bash
+#   #! /bin/bash
+#  sudo yum update -y
+#sudo yum install -y docker
+#sudo service docker start
+#sudo usermod -a -G docker ec2-user
+#sudo docker pull nginx:latest
+#sudo docker run --name mynginx1 -p 80:80 -d nginx
+#docker ps -a
+#EOF
+
+  #! /bin/bash
   sudo yum update -y
 sudo yum install -y docker
 sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
-sudo docker run --name mynginx1 -p 80:80 -d nginx
+sudo docker run --name mynginx1 -p 8070:8080 -d nginx
 docker ps -a
+
+sudo yum -y update
+
+echo "Install Java JDK 8"
+sudo yum remove -y java
+sudo yum install -y java-1.8.0-openjdk
+
+echo "Install Maven"
+sudo yum install -y maven
+
+echo "Install git"
+sudo yum install -y git
+
+echo "Install Docker engine"
+sudo yum update -y
+sudo yum install docker -y
+sudo sudo chkconfig docker on
+
+echo "Install Jenkins"
+sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+sudo yum install -y jenkins
+sudo usermod -a -G docker jenkins
+sudo chkconfig jenkins on
+
+echo "Start Docker & Jenkins services"
+sudo service docker start
+sudo service jenkins start
 EOF
   tags = merge(
     local.tags,
@@ -291,14 +356,50 @@ resource "aws_launch_configuration" "launch_config" {
 
   associate_public_ip_address = true
      user_data = <<-EOF
-              #!/bin/bash
-              yum -y install httpd
-              echo "Hello, from Terraform" > /var/www/html/index.html
-              service httpd start
-              chkconfig httpd on
-              EOF
+#              #!/bin/bash
+#              yum -y install httpd
+#              echo "Hello, from Terraform" > /var/www/html/index.html
+#              service httpd start
+#              chkconfig httpd on
+#              EOF
 
+  #! /bin/bash
+  sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+sudo docker pull nginx:latest
+sudo docker run --name mynginx1 -p 8070:8080 -d nginx
+docker ps -a
 
+sudo yum -y update
+
+echo "Install Java JDK 8"
+sudo yum remove -y java
+sudo yum install -y java-1.8.0-openjdk
+
+echo "Install Maven"
+sudo yum install -y maven
+
+echo "Install git"
+sudo yum install -y git
+
+echo "Install Docker engine"
+sudo yum update -y
+sudo yum install docker -y
+sudo sudo chkconfig docker on
+
+echo "Install Jenkins"
+sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+sudo yum install -y jenkins
+sudo usermod -a -G docker jenkins
+sudo chkconfig jenkins on
+
+echo "Start Docker & Jenkins services"
+sudo service docker start
+sudo service jenkins start
+EOF
 
 #       user_data = <<-EOF
 #                #!/bin/bash
