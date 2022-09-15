@@ -1,17 +1,28 @@
 #! /bin/bash
 
- yum update -y
+ sudo yum update -y
 
- yum install -y docker
+sudo yum install docker
 
-sudo service docker start
+# yum install -y docker
+
+#sudo service docker start
 
 #echo "docker started"
 
-sudo usermod -aG docker $USER
+sudo usermod -a -G docker ec2-user
+
+id ec2-user
+
+newgrp docker
 # usermod -aG docker ec2-user
+
+
+sudo systemctl enable docker.service
+
+sudo systemctl start docker.service
 
  docker pull nginx:latest
 #echo "docker nginx install"
- docker run --name mynginx1 -p 8087:8080 -d nginx
+ docker run --name mynginx1 -p 80:80 -d nginx
 #echo "docker run mynginx1"
