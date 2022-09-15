@@ -215,6 +215,7 @@ sudo service docker start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
 sudo docker run --name mynginx1 -p 80:80 -d nginx
+docker ps -a
 EOF
 
   tags = merge(
@@ -252,11 +253,20 @@ resource "aws_instance" "app_server-pvt" {
   security_groups = [ aws_security_group.allow-sg-pvt.id ]
   subnet_id = aws_subnet.private-sub.id
 #  associate_public_ip_address = true
- user_data = "user.tpl"
+# user_data = "user.tpl"
 #  user_data = "${file("user.tpl")}"
 #  user_data = "user.sh"
   #  count = 2
-
+  user_data = <<-EOF
+   #! /bin/bash
+  sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+sudo docker pull nginx:latest
+sudo docker run --name mynginx1 -p 80:80 -d nginx
+docker ps -a
+EOF
   tags = merge(
     local.tags,
     {
@@ -280,28 +290,31 @@ resource "aws_launch_configuration" "launch_config" {
   security_groups             = [aws_security_group.default.id]
 
   associate_public_ip_address = true
-#     user_data = <<-EOF
-#              #!/bin/bash
-#              yum -y install httpd
-#              echo "Hello, from Terraform" > /var/www/html/index.html
-#              service httpd start
-#              chkconfig httpd on
-#              EOF
+     user_data = <<-EOF
+              #!/bin/bash
+              yum -y install httpd
+              echo "Hello, from Terraform" > /var/www/html/index.html
+              service httpd start
+              chkconfig httpd on
+              EOF
 
-       user_data = <<-EOF
-                #!/bin/bash
-                sudo apt-get update
-sudo apt-get install -y apache2
-sudo systemctl start apache2
-sudo systemctl enable apache2
 
-echo "<h1>Deployed via Terraform</h1>" sudo tee /var/www/html/index.html
 
-sudo systemctl status apache2
-#                echo "Hello, from Terraform" > /var/www/html/index.html
-#                service httpd start
-#                chkconfig httpd on
-                EOF
+#       user_data = <<-EOF
+#                #!/bin/bash
+#                sudo apt-get update
+#sudo apt-get install -y apache2
+#sudo systemctl start apache2
+#sudo systemctl enable apache2
+#
+#echo "<h1>Deployed via Terraform</h1>"  sudo tee /var/www/html/index.html
+#
+#sudo systemctl status apache2
+#
+##                echo "Hello, from Terraform" > /var/www/html/index.html
+##                service httpd start
+##                chkconfig httpd on
+#                EOF
 # user_data = << EOF
 #            #! /bin/bash
 #sudo apt-get update
