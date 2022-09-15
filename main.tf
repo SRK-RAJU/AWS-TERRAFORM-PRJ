@@ -236,9 +236,14 @@ lifecycle {
 }
 
 resource "aws_autoscaling_group" "autoscaling_group" {
+   name = "tf-as-grp"
   launch_configuration = aws_launch_configuration.launch_config.id
   min_size             = var.autoscaling_group_min_size
   max_size             = var.autoscaling_group_max_size
+  force_delete              = true
+  health_check_grace_period = 300
+  health_check_type         = "ELB"
+  placement_group           = aws_launch_configuration.launch_config.id
   target_group_arns    = [aws_alb_target_group.group.arn]
   vpc_zone_identifier  = [aws_subnet.public-sub.id,aws_subnet.private-sub.id]
 
