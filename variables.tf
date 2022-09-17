@@ -27,4 +27,14 @@ variable "instance_type" {}
 variable "autoscaling_group_min_size" {}
 variable "autoscaling_group_max_size" {}
 
+
+variable "SecureVariableOne" {
+  type      = string
+  default   = ""
+  sensitive = true
+}
+variable "ServerName" {
+  type    = string
+  default = "app-server-pub"
+}
 #variable "region" {}

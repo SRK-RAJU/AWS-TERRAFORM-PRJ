@@ -9,7 +9,85 @@
 #  public_sg     = module.network.public_sg
 #  public_subnet = module.network.public-sub-1
 #}
+locals {
+  account_id = aws_vpc.my_vpc.owner_id
+}
+resource "aws_ssm_parameter" "parameter_one" {
+  name  = "/dev/SecureVariableOne"
+  type  = "SecureString"
+  value = var.SecureVariableOne
+}
 
+## IAM policy ROle creation .........
+#Create a policy
+#https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy
+resource "aws_iam_policy" "ec2_policy" {
+  name        = "ec2_policy"
+  path        = "/"
+  description = "Policy to provide permission to EC2"
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ssm:GetParameters",
+          "ssm:GetParameter"
+        ],
+        Resource = "arn:aws:ssm:us-east-1:${local.account_id}:parameter/dev*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+          "s3:GetObject",
+          "s3:List*"
+        ],
+        "Resource": [
+          "arn:aws:s3:::arn:aws:s3:::terra-sree1/raju/*"
+        ]
+      }
+    ]
+  })
+}
+
+#Create a role
+#https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
+resource "aws_iam_role" "ec2_role" {
+  name = "ec2_role"
+
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+#Attach role to policy
+#https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy_attachment
+resource "aws_iam_policy_attachment" "ec2_policy_role" {
+  name       = "ec2_attachment"
+  roles      = [aws_iam_role.ec2_role.name]
+  policy_arn = aws_iam_policy.ec2_policy.arn
+}
+
+#Attach role to an instance profile
+#https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2_profile"
+  role = aws_iam_role.ec2_role.name
+}
 
 
 resource "tls_private_key" "dev_key" {
@@ -203,45 +281,52 @@ resource "aws_instance" "app_server-pub" {
   key_name = var.generated_key_name
   security_groups = [ aws_security_group.allow-sg-pub.id ]
   subnet_id = aws_subnet.public-sub.id
+  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
+  associate_public_ip_address = true
+  user_data = templatefile("users.tpl",
+    {
+      ServerName     = var.ServerName
+      SecureVariable = aws_ssm_parameter.parameter_one.name
+    })
 #  associate_public_ip_address = true
 #  user_data = "user.tpl"
 #  user_data = "${file("user.tpl")}"
   #  count = 2
-  user_data = <<-EOF
-#! /bin/bash
-sudo yum update -y
-echo "Install Docker engine"
-sudo yum install -y docker
-sudo sudo chkconfig docker on
-sudo service dock er start
-sudo usermod -a -G docker ec2-user
-sudo docker pull nginx:latest
-sudo docker run --name mynginx1 -p 70:80 -d nginx
-
-echo "Install Java JDK 8"
-sudo yum remove -y java
-sudo yum install -y java-1.8.0-openjdk
-
-echo "Install Maven"
-sudo yum install -y maven
-
-echo "Install git"
-sudo yum install -y git
-
-echo "Install Jenkins"
-sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
-sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
-sudo yum install -y jenkins
-sudo usermod -a -G docker jenkins
-sudo chkconfig jenkins on
-
-echo "Start Docker & Jenkins services"
-sudo service docker start
-sudo service jenkins start
-sudo wget https://get.jenkins.io/war-stable/2.361.1/jenkins.war
-sudo java -jar jenkins.war
-
-EOF
+#  user_data = <<-EOF
+##! /bin/bash
+#sudo yum update -y
+#echo "Install Docker engine"
+#sudo yum install -y docker
+#sudo sudo chkconfig docker on
+#sudo service dock er start
+#sudo usermod -a -G docker ec2-user
+#sudo docker pull nginx:latest
+#sudo docker run --name mynginx1 -p 70:80 -d nginx
+#
+#echo "Install Java JDK 8"
+#sudo yum remove -y java
+#sudo yum install -y java-1.8.0-openjdk
+#
+#echo "Install Maven"
+#sudo yum install -y maven
+#
+#echo "Install git"
+#sudo yum install -y git
+#
+#echo "Install Jenkins"
+#sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+#sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+#sudo yum install -y jenkins
+#sudo usermod -a -G docker jenkins
+#sudo chkconfig jenkins on
+#
+#echo "Start Docker & Jenkins services"
+#sudo service docker start
+#sudo service jenkins start
+#sudo wget https://get.jenkins.io/war-stable/2.361.1/jenkins.war
+#sudo java -jar jenkins.war
+#
+#EOF
 
 
   tags = merge(
