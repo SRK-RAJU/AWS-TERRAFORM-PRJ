@@ -282,7 +282,7 @@ resource "aws_instance" "app_server-pub" {
   security_groups = [ aws_security_group.allow-sg-pub.id ]
   subnet_id = aws_subnet.public-sub.id
   iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
-  user_data = file("user-data.sh")
+  user_data = "${file("user-data.sh")}"
 #  associate_public_ip_address = true
 #  user_data =templatefile("user.tpl")
 #  associate_public_ip_address = true
