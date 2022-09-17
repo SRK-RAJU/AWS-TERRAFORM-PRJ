@@ -297,7 +297,7 @@ sudo sudo chkconfig docker on
 sudo service dock er start
 sudo usermod -a -G docker ec2-user
 sudo docker pull nginx:latest
-sudo docker run --name mynginx1 -p 70:80 -d nginx
+sudo docker run --name mynginx1 -p 710:80 -d nginx
 
 echo "Install Java JDK 8"
 sudo yum remove -y java
