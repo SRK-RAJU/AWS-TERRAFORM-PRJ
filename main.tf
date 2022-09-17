@@ -282,31 +282,32 @@ resource "aws_instance" "app_server-pub" {
   security_groups = [ aws_security_group.allow-sg-pub.id ]
   subnet_id = aws_subnet.public-sub.id
   iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
-#  user_data = "${file("user-data.sh")}"
+  user_data = [docker_image.nginx.name,docker_container.nginx.image]
+  #  user_data = "${file("user-data.sh")}"
 #  associate_public_ip_address = true
 #  user_data =templatefile("user.tpl")
 #  associate_public_ip_address = true
 #  user_data = "user.tpl"
 #  user_data = "${file("user.tpl")}"
   #  count = 2
-  user_data = <<-EOF
-#! /bin/bash
-sudo yum update -y
-echo "Install Docker engine"
-sudo yum install -y docker
-sudo sudo chkconfig docker on
-sudo service dock er start
-sudo usermod -a -G docker ec2-user
-sudo docker pull nginx:latest
-sudo docker run --name mynginx4 -p 60:80 -d nginx
+#  user_data = <<-EOF
+##! /bin/bash
+#sudo yum update -y
+#echo "Install Docker engine"
+#sudo yum install -y docker
+#sudo sudo chkconfig docker on
+#sudo service dock er start
+#sudo usermod -a -G docker ec2-user
+#sudo docker pull nginx:latest
+#sudo docker run --name mynginx4 -p 60:80 -d nginx
+#
+#EOF
 
-EOF
-
-  provisioner "remote-exec" {
-    inline = [
-      "sh /user-data.sh"
-    ]
-  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      "sh /user-data.sh"
+#    ]
+#  }
 
 #echo "Install Java JDK 8"
 #sudo yum remove -y java
