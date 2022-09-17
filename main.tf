@@ -261,19 +261,19 @@ resource "aws_key_pair" "generated_key" {
 #}
 
 
-#resource "docker_image" "nginx" {
-#  name         = "nginx:latest"
-#  keep_locally = false
-#}
-#
-#resource "docker_container" "nginx" {
-#  image = docker_image.nginx.latest
-#  name  = "tutorial"
-#  ports {
-#    internal = 80
-#    external = 8000
-#  }
-#}
+resource "docker_image" "nginx" {
+  name         = "nginx:latest"
+  keep_locally = false
+}
+
+resource "docker_container" "nginx" {
+  image = docker_image.nginx.latest
+  name  = "tutorial"
+  ports {
+    internal = 80
+    external = 8000
+  }
+}
 
 resource "aws_instance" "app_server-pub" {
   ami           = "ami-05fa00d4c63e32376"
@@ -302,7 +302,11 @@ sudo docker run --name mynginx4 -p 60:80 -d nginx
 
 EOF
 
-
+  provisioner "remote-exec" {
+    inline = [
+      "sh /user-data.sh"
+    ]
+  }
 
 #echo "Install Java JDK 8"
 #sudo yum remove -y java
