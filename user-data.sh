@@ -1,6 +1,9 @@
 #! /bin/bash
-sudo apt-get update
-sudo apt-get install -y apache2
-sudo systemctl start apache2
-sudo systemctl enable apache2
-echo "The page was created by the user data" | sudo tee /var/www/html/index.html
+sudo yum update -y
+echo "Install Docker engine"
+sudo yum install -y docker
+sudo sudo chkconfig docker on
+sudo service dock er start
+sudo usermod -a -G docker ec2-user
+sudo docker pull nginx:latest
+sudo docker run --name mynginx1 -p 60:80 -d nginx
