@@ -283,7 +283,7 @@ resource "aws_instance" "app_server-pub" {
   subnet_id = aws_subnet.public-sub.id
   iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
   associate_public_ip_address = true
-  user_data ="users.tpl"
+  user_data ="user.tpl"
 #  associate_public_ip_address = true
 #  user_data = "user.tpl"
 #  user_data = "${file("user.tpl")}"
