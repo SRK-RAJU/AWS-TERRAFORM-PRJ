@@ -286,7 +286,6 @@ resource "aws_instance" "app_server-pub" {
   user_data = templatefile("users.tpl",
     {
       ServerName     = var.ServerName
-#      SecureVariable = aws_ssm_parameter.parameter_one.name
     })
 #  associate_public_ip_address = true
 #  user_data = "user.tpl"
