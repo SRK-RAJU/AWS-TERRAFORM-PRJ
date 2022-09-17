@@ -291,6 +291,7 @@ resource "aws_instance" "app_server-pub" {
 #  user_data = "user.tpl"
 #  user_data = "${file("user.tpl")}"
   #  count = 2
+#  user_data = ""
   user_data = <<-EOF
 #! /bin/bash
 sudo yum update -y
