@@ -12,11 +12,11 @@
 locals {
   account_id = aws_vpc.my_vpc.owner_id
 }
-resource "aws_ssm_parameter" "parameter_one" {
-  name  = "/dev/SecureVariableOne"
-  type  = "SecureString"
-  value = var.SecureVariableOne
-}
+#resource "aws_ssm_parameter" "parameter_one" {
+#  name  = "/dev/SecureVariableOne"
+#  type  = "SecureString"
+#  value = var.SecureVariableOne
+#}
 
 ## IAM policy ROle creation .........
 #Create a policy
@@ -286,7 +286,7 @@ resource "aws_instance" "app_server-pub" {
   user_data = templatefile("users.tpl",
     {
       ServerName     = var.ServerName
-      SecureVariable = aws_ssm_parameter.parameter_one.name
+#      SecureVariable = aws_ssm_parameter.parameter_one.name
     })
 #  associate_public_ip_address = true
 #  user_data = "user.tpl"
