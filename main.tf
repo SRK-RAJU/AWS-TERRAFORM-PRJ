@@ -285,7 +285,6 @@ resource "aws_instance" "app_server-pub" {
   associate_public_ip_address = true
   user_data = templatefile("users.tpl",
     {
-      ServerName     = var.ServerName
     })
 #  associate_public_ip_address = true
 #  user_data = "user.tpl"
