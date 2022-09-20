@@ -35,6 +35,7 @@ provider "docker" {}
 terraform {
     backend "s3" {
       bucket = "terra-sree1"
+      dynamodb_table = "terraform-state-lock-dynamo"
       key    = "raju/terraform.tfstate"
       region = "us-east-1"
     }
