@@ -289,6 +289,7 @@ resource "aws_instance" "app_server-pub" {
 #  user_data =templatefile("user.tpl")
 #  associate_public_ip_address = true
 #  user_data = "user.tpl"
+#  user_data = "user.tpl"
 #  user_data = "${file("user.tpl")}"
   #  count = 2
 #  user_data = ""
