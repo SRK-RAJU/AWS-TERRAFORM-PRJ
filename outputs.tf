@@ -7,3 +7,4 @@ output "ssh_key" {
   sensitive = true
   value       = tls_private_key.dev_key.private_key_pem
 }
+
